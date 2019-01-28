@@ -8,9 +8,22 @@ import functools
 class So3:
     """ 3 dimensional group of orthogonal matrices with determinant 1 """
 
-    def __init__(self, q):
+    def __init__(self, o):
         """ internally represented by a unit quaternion q """
-        self.q = q
+        assert(type(o) is sophus.Quaternion or type(o) is sympy.Matrix)
+        if type(o) is sophus.Quaternion:  # From sophus quaternion
+            self.q = o
+        elif type(o) is sympy.Matrix:  # From sympy rotation matrix
+            assert(o.shape == (3, 3))
+            assert(o.T*o == sympy.Matrix.eye(3))
+            assert(o.det() == 1)
+            w = sympy.sqrt(1 + o[0, 0] + o[1, 1] + o[2, 2])*0.5
+            i = (o[2, 1]-o[1, 2])/(4*w)
+            j = (o[0, 2]-o[2, 0])/(4*w)
+            k = (o[1, 0]-o[0, 1])/(4*w)
+            self.q = sophus.Quaternion(w, sophus.Vector3(i, j, k))
+        else:
+            assert(False)
 
     @staticmethod
     def exp(v):
