@@ -208,9 +208,10 @@ class TestSe3(unittest.TestCase):
                          sophus.ZeroVector3())
 
     def test_adjoint(self):
-        T = sympy.Matrix([[1, 0, 0, 0],
+        T = sympy.Matrix([[1, 0,  0, 0],
                           [0, 0, -1, 0],
-                          [0, 0, 0, 1]])
+                          [0, 1,  0, 3],
+                          [0, 0,  0, 1]])
 
         se3 = sophus.Se3(sophus.So3(T[0:3, 0:3]), T[0:3, 3])
 
