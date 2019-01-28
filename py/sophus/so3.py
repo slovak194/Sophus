@@ -18,10 +18,10 @@ class So3:
             assert(o.T*o == sympy.Matrix.eye(3))
             assert(o.det() == 1)
             w = sympy.sqrt(1 + o[0, 0] + o[1, 1] + o[2, 2])*0.5
-            i = (o[2, 1]-o[1, 2])/(4*w)
-            j = (o[0, 2]-o[2, 0])/(4*w)
-            k = (o[1, 0]-o[0, 1])/(4*w)
-            self.q = sophus.Quaternion(w, sophus.Vector3(i, j, k))
+            x = (o[2, 1]-o[1, 2])/(4*w)
+            y = (o[0, 2]-o[2, 0])/(4*w)
+            z = (o[1, 0]-o[0, 1])/(4*w)
+            self.q = sophus.Quaternion(w, sophus.Vector3(x, y, z))
         else:
             assert(False)
 
