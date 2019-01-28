@@ -70,7 +70,17 @@ class Se3:
         upsilon_omega = \
             sophus.Vector6(head[0], head[1], head[2], tail[0], tail[1], tail[2])
         return upsilon_omega
-            
+
+
+    def Adj(self):
+        """ Adjoint transformation """
+        """ This function return the adjoint transformation ``Ad`` of the group """
+        """ element ``A`` such that for all ``x`` it holds that """
+        """ ``hat(Ad_A * x) = A * hat(x) A^{-1}``. See hat-operator above. """
+
+        R = self.so3.matrix()
+        return (R.row_join(sympy.Matrix.zeros(3,3))) \
+            .col_join((sophus.So3.hat(self.t) * R).row_join(R))
 
     def matrix(self):
         """ returns matrix representation """
@@ -196,6 +206,21 @@ class TestSe3(unittest.TestCase):
         p2_foo = sophus.proj(Tmat_foo_bar * sophus.unproj(point_bar))
         self.assertEqual(sympy.simplify(p1_foo - p2_foo),
                          sophus.ZeroVector3())
+
+    def test_adjoint(self):
+        T = sympy.Matrix([[1, 0, 0, 0],
+                          [0, 0, -1, 0],
+                          [0, 0, 0, 1]])
+
+        se3 = sophus.Se3(sophus.So3(T[0:3, 0:3]), T[0:3, 3])
+
+        self.assertEqual(se3.Adj(), sympy.Matrix([[1, 0, 0, 0, 0, 0],
+                                                  [0, 0, -1, 0, 0, 0],
+                                                  [0, 1, 0, 0, 0, 0],
+                                                  [0, 0, 3, 1, 0, 0],
+                                                  [3, 0, 0, 0, 0, -1],
+                                                  [0, 0, 0, 0, 1, 0]]))
+
 
     def test_derivatives(self):
         self.assertEqual(sympy.simplify(
