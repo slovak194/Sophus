@@ -40,6 +40,12 @@ class So3:
         n = sympy.sqrt(sophus.squared_norm(self.q.vec))
         return 2 * sympy.atan(n / self.q.real) / n * self.q.vec
 
+
+    def inverse(self):
+        """ Returns group inverse."""
+        return sophus.So3(self.q.conj())
+
+
     def __repr__(self):
         return "So3:" + repr(self.q)
 
