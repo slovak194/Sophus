@@ -15,8 +15,6 @@ class So3:
             self.q = o
         elif type(o) is sympy.Matrix:  # From sympy rotation matrix
             assert(o.shape == (3, 3))
-            assert(o.T*o == sympy.Matrix.eye(3))
-            assert(o.det() == 1)
             w = sympy.sqrt(1 + o[0, 0] + o[1, 1] + o[2, 2])*0.5
             x = (o[2, 1]-o[1, 2])/(4*w)
             y = (o[0, 2]-o[2, 0])/(4*w)
