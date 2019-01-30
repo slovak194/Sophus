@@ -46,6 +46,13 @@ class Se3:
         upsilon = V_inv * self.t
         return upsilon.col_join(omega)
 
+
+    def inverse(self):
+        """ Returns group inverse."""
+        invR = self.so3.inverse()
+        invt = invR * -self.t
+        return sophus.Se3(invR, invt)
+
     def __repr__(self):
         return "Se3: [" + repr(self.so3) + " " + repr(self.t)
 
@@ -215,12 +222,26 @@ class TestSe3(unittest.TestCase):
 
         se3 = sophus.Se3(sophus.So3(T[0:3, 0:3]), T[0:3, 3])
 
-        self.assertEqual(se3.Adj(), sympy.Matrix([[1, 0, 0, 0, 0, 0],
-                                                  [0, 0, -1, 0, 0, 0],
-                                                  [0, 1, 0, 0, 0, 0],
-                                                  [0, 0, 3, 1, 0, 0],
-                                                  [3, 0, 0, 0, 0, -1],
-                                                  [0, 0, 0, 0, 1, 0]]))
+        self.assertEqual(se3.Adj(), sympy.Matrix([[1, 0,  0, 0, 0,  0 ],
+                                                  [0, 0, -1, 0, 0,  0 ],
+                                                  [0, 1,  0, 0, 0,  0 ],
+                                                  [0, 0,  3, 1, 0,  0 ],
+                                                  [3, 0,  0, 0, 0, -1],
+                                                  [0, 0,  0, 0, 1,  0 ]]))
+
+    def test_inverse(self):
+        T = sympy.Matrix([  [1, 0,  0, 0],
+                            [0, 0, -1, 0],
+                            [0, 1,  0, 3],
+                            [0, 0,  0, 1]])
+
+        se3 = sophus.Se3(sophus.So3(T[0:3, 0:3]), T[0:3, 3])
+
+        self.assertEqual(se3.inverse().matrix(), sympy.Matrix([
+                                [1,    0,   0,    0],
+                                [0,    0, 1.0, -3.0],
+                                [0, -1.0,   0,    0],
+                                [0,    0,   0,    1]]))
 
 
     def test_derivatives(self):
