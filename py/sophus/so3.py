@@ -13,7 +13,7 @@ class So3:
         assert(type(o) is sophus.Quaternion or type(o) is sympy.Matrix)
         if type(o) is sophus.Quaternion:  # From sophus quaternion
             self.q = o
-        elif type(o) is sympy.Matrix:  # From sympy rotation matrix
+        elif type(o) is sympy.Matrix:  # TODO Remove this shit and check where it is used
             assert(o.shape == (3, 3))
             w = sympy.sqrt(1 + o[0, 0] + o[1, 1] + o[2, 2])*0.5
             x = (o[2, 1]-o[1, 2])/(4*w)
